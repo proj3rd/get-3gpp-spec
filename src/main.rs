@@ -1,16 +1,18 @@
 use std::str::FromStr;
 
+use chrono::{DateTime, Utc};
 use suppaftp::list::File;
 use suppaftp::FtpStream;
 mod numbering;
 use numbering::get_series;
 mod versioning;
-use versioning::{Version, parse_version};
+use versioning::{parse_version, Version};
 
 #[derive(Debug)]
 struct ParsedFile<'a> {
     name: &'a str,
     version: Version,
+    date_time: DateTime<Utc>,
 }
 
 fn main() {
@@ -37,7 +39,12 @@ fn main() {
             let last_index_of_dot = name.rfind(".").unwrap();
             let version =
                 parse_version(&name[last_index_of_hyphen + 1..last_index_of_dot]).unwrap();
-            ParsedFile { name, version }
+            let date_time = DateTime::<Utc>::from(file.modified());
+            ParsedFile {
+                name,
+                version,
+                date_time,
+            }
         })
         .collect::<Vec<ParsedFile>>();
     for entry in parsed_list.iter() {
