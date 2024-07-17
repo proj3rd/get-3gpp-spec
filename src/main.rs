@@ -1,12 +1,30 @@
 use std::str::FromStr;
 
 use chrono::{DateTime, Utc};
+use clap::Parser;
 use suppaftp::list::File;
 use suppaftp::FtpStream;
 mod numbering;
 use numbering::get_series;
 mod versioning;
 use versioning::{parse_version, Version};
+
+#[derive(Parser, Debug)]
+struct Args {
+    /// Spec numbering, e.g. 36.331
+    spec: String,
+    /// Release, e.g. 18
+    #[arg(short, long, value_name = "REL")]
+    rel: Option<u8>,
+    /// Year and month, e.g. 2024-06
+    /// When provided, it looks for specs
+    /// from the given month to the given month plus two
+    #[arg(short, long, value_name = "YYYY-MM", verbatim_doc_comment)]
+    date: Option<String>,
+    /// List all corresponding specs instead of downloading one
+    #[arg(short, long)]
+    list: bool,
+}
 
 #[derive(Debug)]
 struct ParsedFile<'a> {
@@ -16,9 +34,9 @@ struct ParsedFile<'a> {
 }
 
 fn main() {
-    let spec = "36.331"; // TODO: extract from args
-    let series = get_series(spec).unwrap();
-    let path = format!("Specs/archive/{series}_series/{spec}");
+    let args = Args::parse();
+    let series = get_series(&args.spec).unwrap();
+    let path = format!("Specs/archive/{series}_series/{}", args.spec);
     let mut ftp_stream =
         FtpStream::connect("ftp.3gpp.org:21").expect("Failed to connect to ftp.3gpp.org");
     ftp_stream
