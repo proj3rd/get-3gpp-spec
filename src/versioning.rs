@@ -1,8 +1,16 @@
+use std::fmt::Display;
+
 #[derive(PartialEq, Debug)]
 pub struct Version {
     major: u8,
     minor: u8,
     editorial: u8,
+}
+
+impl Display for Version {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}.{}.{}", self.major, self.minor, self.editorial)
+    }
 }
 
 pub fn parse_version(version_string: &str) -> Result<Version, String> {

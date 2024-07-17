@@ -1,6 +1,6 @@
-use std::str::FromStr;
+use std::{fmt::Display, str::FromStr};
 
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, Datelike, Utc};
 use clap::Parser;
 use suppaftp::list::File;
 use suppaftp::FtpStream;
@@ -31,6 +31,19 @@ struct ParsedFile<'a> {
     name: &'a str,
     version: Version,
     date_time: DateTime<Utc>,
+}
+
+impl Display for ParsedFile<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "Name: {}, version: {}, date: {}-{:0>2}",
+            self.name,
+            self.version,
+            self.date_time.year(),
+            self.date_time.month()
+        )
+    }
 }
 
 fn main() {
