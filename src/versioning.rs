@@ -2,9 +2,9 @@ use std::fmt::Display;
 
 #[derive(PartialEq, Debug)]
 pub struct Version {
-    major: u8,
-    minor: u8,
-    editorial: u8,
+    pub major: u8,
+    pub minor: u8,
+    pub editorial: u8,
 }
 
 impl Display for Version {
