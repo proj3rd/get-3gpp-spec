@@ -1,5 +1,8 @@
 pub fn get_series(spec: &str) -> Result<&str, String> {
-    let err_msg = Err(format!("'{}' should starts with a 2-digit non-negative integer followed by a dot", spec));
+    let err_msg = Err(format!(
+        "'{}' should starts with a 2-digit non-negative integer followed by a dot",
+        spec
+    ));
     if spec.len() < 3 {
         return err_msg;
     }
