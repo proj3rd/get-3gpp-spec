@@ -3,9 +3,6 @@ name = "get-3gpp-spec"
 version = "0.1.0"
 edition = "2021"
 
-[[bin]]
-name = "get-3gpp-spec-${TARGET}"
-
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
