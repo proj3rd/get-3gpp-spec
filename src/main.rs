@@ -2,6 +2,7 @@ use chrono::{DateTime, Months};
 use clap::Parser;
 mod ftp;
 mod numbering;
+mod parsed_file;
 mod versioning;
 
 #[derive(Parser, Debug)]

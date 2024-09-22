@@ -1,30 +1,7 @@
+use crate::{numbering::get_series, parsed_file::ParsedFile, versioning::parse_version};
 use chrono::{DateTime, FixedOffset, Utc};
-use std::{cmp::Ordering, fmt::Display, fs, io::Write, str::FromStr};
+use std::{cmp::Ordering, fs, io::Write, str::FromStr};
 use suppaftp::{list::File, FtpStream};
-
-use crate::{
-    numbering::get_series,
-    versioning::{parse_version, Version},
-};
-
-#[derive(Debug)]
-struct ParsedFile<'a> {
-    name: &'a str,
-    version: Version,
-    date_time: DateTime<Utc>,
-}
-
-impl Display for ParsedFile<'_> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "Name: {}, version: {}, date: {}",
-            self.name,
-            self.version,
-            self.date_time.format("%Y-%m")
-        )
-    }
-}
 
 pub fn get(
     spec: String,
