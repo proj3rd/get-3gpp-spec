@@ -1,6 +1,7 @@
 use chrono::{DateTime, Months};
 use clap::Parser;
-mod ftp;
+mod http;
+use http::get;
 mod numbering;
 mod parsed_file;
 mod versioning;
@@ -40,5 +41,5 @@ fn main() {
         Some(date) => Some(date.clone().checked_add_months(Months::new(2)).unwrap()),
     };
 
-    ftp::get(args.spec, args.rel, start_date, end_date, args.list);
+    get(args.spec, args.rel, start_date, end_date, args.list);
 }
