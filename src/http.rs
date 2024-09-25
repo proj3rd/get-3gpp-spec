@@ -19,7 +19,12 @@ pub fn get(
 ) {
     let series = get_series(&spec).unwrap();
     let path = format!("https://www.3gpp.org/ftp/Specs/archive/{series}_series/{spec}",);
-    let response = reqwest::blocking::get(path).unwrap();
+    let timeout_secs = 60;
+    let client = reqwest::blocking::Client::builder()
+        .timeout(Duration::from_secs(timeout_secs))
+        .build()
+        .unwrap();
+    let response = client.get(path).send().unwrap();
     assert!(response.status().is_success());
     let body = response.text().unwrap();
 
@@ -102,11 +107,6 @@ pub fn get(
     } else {
         let latest_file = filtered_list.first().unwrap();
         println!("Downloading {}...", latest_file.name);
-        let timeout_secs = 60;
-        let client = reqwest::blocking::Client::builder()
-            .timeout(Duration::from_secs(timeout_secs))
-            .build()
-            .unwrap();
         let path = format!(
             "https://www.3gpp.org/ftp/Specs/archive/{series}_series/{spec}/{}",
             latest_file.name
