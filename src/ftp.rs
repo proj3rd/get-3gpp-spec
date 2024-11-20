@@ -1,15 +1,12 @@
-use crate::{numbering::get_series, parsed_file::ParsedFile, versioning::parse_version};
-use chrono::{DateTime, FixedOffset, Utc};
+use crate::{
+    date_range::DateRange, numbering::get_series, parsed_file::ParsedFile,
+    versioning::parse_version,
+};
+use chrono::{DateTime, Utc};
 use std::{cmp::Ordering, fs, io::Write, str::FromStr};
 use suppaftp::{list::File, FtpStream};
 
-pub fn get(
-    spec: String,
-    rel: Option<u8>,
-    start_date: Option<DateTime<FixedOffset>>,
-    end_date: Option<DateTime<FixedOffset>>,
-    show_list: bool,
-) {
+pub fn get(spec: &str, rel: Option<u8>, maybe_date_range: &Option<DateRange>, show_list: bool) {
     let series = get_series(&spec).unwrap();
     let path = format!("Specs/archive/{series}_series/{}", spec);
     let mut ftp_stream =
@@ -49,13 +46,15 @@ pub fn get(
                 }
                 None => {}
             };
-            match (start_date, end_date) {
-                (Some(start), Some(end)) => {
-                    if start > file.date_time || end < file.date_time {
+            match maybe_date_range {
+                None => {}
+                Some(date_range) => {
+                    if date_range.start_date > file.date_time
+                        || date_range.end_date < file.date_time
+                    {
                         return false;
                     }
                 }
-                _ => {}
             }
             true
         })

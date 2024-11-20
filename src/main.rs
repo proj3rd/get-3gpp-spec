@@ -1,7 +1,8 @@
-use chrono::{DateTime, Months};
 use clap::Parser;
+mod date_range;
+mod ftp;
 mod http;
-use http::get;
+use date_range::parse_date_range;
 mod numbering;
 mod parsed_file;
 mod versioning;
@@ -25,21 +26,13 @@ struct Args {
 
 fn main() {
     let args = Args::parse();
-
-    let start_date = match args.date {
-        None => None,
-        Some(str) => Some(
-            DateTime::parse_from_str(
-                format!("{str}-01 00:00:00 +0000").as_str(),
-                "%Y-%m-%d %H:%M:%S %z",
-            )
-            .expect(format!("Date must be in a form of YYYY-MM, but got {str}").as_str()),
-        ),
+    let maybe_date_range = match parse_date_range(args.date) {
+        Ok(date_range) => date_range,
+        Err(e) => {
+            eprintln!("{e}");
+            return;
+        }
     };
-    let end_date = match start_date {
-        None => None,
-        Some(date) => Some(date.clone().checked_add_months(Months::new(2)).unwrap()),
-    };
-
-    get(args.spec, args.rel, start_date, end_date, args.list);
+    http::get(&args.spec, args.rel, &maybe_date_range, args.list);
+    // ftp::get(&args.spec, args.rel, &maybe_date_range, args.list);
 }
