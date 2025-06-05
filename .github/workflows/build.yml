@@ -1,6 +1,10 @@
 name: Rust Build
 
-on: [push, pull_request]
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        required: true
 
 jobs:
   build:
@@ -10,6 +14,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v4
+      with:
+        ref: ${{ github.event.inputs.ref }}
     - name: Install Rust toolchain
       uses: actions-rs/toolchain@v1
       with:
@@ -21,17 +27,17 @@ jobs:
       if: matrix.os == 'ubuntu-latest'
       uses: actions/upload-artifact@v4
       with:
-        name: my-project-linux
-        path: target/release/your_project_name # 실제 프로젝트 실행 파일 경로로 변경
+        name: get-3gpp-spec-linux
+        path: linux/get-3gpp-spec # 실제 프로젝트 실행 파일 경로로 변경
     - name: Upload artifact (Windows)
       if: matrix.os == 'windows-latest'
       uses: actions/upload-artifact@v4
       with:
-        name: my-project-windows
-        path: target/release/your_project_name.exe # 실제 프로젝트 실행 파일 경로로 변경
+        name: get-3gpp-spec-windows
+        path: windows/get-3gpp-spec.exe # 실제 프로젝트 실행 파일 경로로 변경
     - name: Upload artifact (macOS)
       if: matrix.os == 'macos-latest'
       uses: actions/upload-artifact@v4
       with:
-        name: my-project-macos
-        path: target/release/your_project_name # 실제 프로젝트 실행 파일 경로로 변경
+        name: get-3gpp-spec-macos
+        path: macos/get-3gpp-spec # 실제 프로젝트 실행 파일 경로로 변경
